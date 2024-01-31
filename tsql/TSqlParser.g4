@@ -96,7 +96,7 @@ tsql_file
 
 batch
     : go_statement
-    | execute_body_batch? (go_statement | sql_clauses+) go_statement*
+    | execute_body_batch? (go_statement | sql_clauses)+ go_statement*
     | batch_level_statement go_statement*
     ;
 
