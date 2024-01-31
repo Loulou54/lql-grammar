@@ -35,6 +35,26 @@ options {
     caseInsensitive = true;
 }
 
+/*
+ * LQL superset grammar
+ */
+
+LQL_WHERE_OPEN  : '[';
+LQL_WHERE_CLOSE : ']';
+
+LQL_SELECT_OPEN  : '{';
+LQL_SELECT_CLOSE : '}';
+
+LQL_LEFT_OUTER_JOIN_OPERATOR    : '_^';
+LQL_RIGHT_OUTER_JOIN_OPERATOR   : '^_';
+LQL_FULL_OUTER_JOIN_OPERATOR    : '_^_';
+LQL_CROSS_JOIN_OPERATOR         : '__';
+
+
+/*
+ * Original TSQL grammar
+ */
+
 //Keywords that can exist in ID etc
 //More keywords that can also be used as IDs
 ABORT                                       : 'ABORT';
@@ -1218,7 +1238,6 @@ LINE_COMMENT : '--' ~[\r\n]*             -> channel(HIDDEN);
 DOUBLE_QUOTE_ID    : '"' ~'"'+ '"';
 DOUBLE_QUOTE_BLANK : '""';
 SINGLE_QUOTE       : '\'';
-SQUARE_BRACKET_ID  : '[' (~']' | ']' ']')* ']';
 LOCAL_ID           : '@' ([A-Z_$@#0-9] | FullWidthLetter)*;
 TEMP_ID            : '#' ([A-Z_$@#0-9] | FullWidthLetter)*;
 DECIMAL            : DEC_DIGIT+;

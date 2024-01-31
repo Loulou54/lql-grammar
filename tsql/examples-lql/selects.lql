@@ -1,0 +1,7 @@
+
+DOCS;
+
+DOCS [idDoc=23 or docName LIKE '%.pdf'] {idDoc, docName, dtMaj};
+
+DOCS [idDoc=23 or docName LIKE '%.pdf'] {idDoc, docName, dtMaj}
+_^_ USERS <author=userId> [country='FR'] {userName};

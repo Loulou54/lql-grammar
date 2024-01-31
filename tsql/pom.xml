@@ -35,12 +35,12 @@
 				<artifactId>antlr4test-maven-plugin</artifactId>
 				<version>${antlr4test-maven-plugin.version}</version>
 				<configuration>
-					<verbose>false</verbose>
-					<showTree>false</showTree>
+					<verbose>true</verbose>
+					<showTree>true</showTree>
 					<entryPoint>tsql_file</entryPoint>
 					<grammarName>TSql</grammarName>
 					<packageName></packageName>
-					<exampleFiles>examples/</exampleFiles>
+					<exampleFiles>debug/</exampleFiles>
 				</configuration>
 				<executions>
 					<execution>

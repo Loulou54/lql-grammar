@@ -32,6 +32,63 @@ options {
     tokenVocab = TSqlLexer;
 }
 
+/*
+ * LQL superset grammar
+ */
+
+lql_statement
+    : (lql_select
+    | lql_insert
+    | lql_update
+    | lql_delete) SEMI
+    ;
+
+
+lql_select
+    : table_name
+    | lql_select lql_where
+    | lql_select lql_select_columns
+    | lql_select lql_join
+    ;
+
+lql_where : LQL_WHERE_OPEN search_condition LQL_WHERE_CLOSE;
+
+lql_select_columns : LQL_SELECT_OPEN select_list LQL_SELECT_CLOSE;
+
+lql_join
+    : lql_join_on_operator table_name lql_join_on?
+    | LQL_CROSS_JOIN_OPERATOR table_name
+    ;
+
+lql_join_on_operator
+    : BIT_XOR
+    | LQL_LEFT_OUTER_JOIN_OPERATOR
+    | LQL_RIGHT_OUTER_JOIN_OPERATOR
+    | LQL_FULL_OUTER_JOIN_OPERATOR
+    ;
+
+lql_join_on : LESS search_condition GREATER;
+
+
+lql_insert
+    : PLUS table_name (LQL_SELECT_OPEN insert_column_name_list LQL_SELECT_CLOSE)? '(' exps += expression_list_ ')' (',' '(' exps += expression_list_ ')')*
+    ;
+
+
+lql_update
+    : BIT_NOT table_name lql_where? LQL_SELECT_OPEN update_elem (',' update_elem)* LQL_SELECT_CLOSE
+    ;
+
+
+lql_delete
+    : MINUS table_name lql_where?
+    ;
+
+
+/*
+ * Original TSQL grammar
+ */
+
 tsql_file
     : batch* EOF
     | execute_body_batch go_statement* EOF
@@ -57,6 +114,7 @@ sql_clauses
     | ddl_clause SEMI?
     | dbcc_clause SEMI?
     | backup_statement SEMI?
+    | lql_statement
     | SEMI
     ;
 
@@ -5257,8 +5315,10 @@ send_conversation
 // https://msdn.microsoft.com/en-us/library/ms187752.aspx
 // TODO: implement runtime check or add new tokens.
 
+square_bracket_id : LQL_WHERE_OPEN (~LQL_WHERE_CLOSE | LQL_WHERE_CLOSE LQL_WHERE_CLOSE)* LQL_WHERE_CLOSE;
+
 data_type
-    : scaled = (VARCHAR | NVARCHAR | BINARY_KEYWORD | VARBINARY_KEYWORD | SQUARE_BRACKET_ID) '(' MAX ')'
+    : (scaled = (VARCHAR | NVARCHAR | BINARY_KEYWORD | VARBINARY_KEYWORD) | square_bracket_id) '(' MAX ')'
     | ext_type = id_ '(' scale = DECIMAL ',' prec = DECIMAL ')'
     | ext_type = id_ '(' scale = DECIMAL ')'
     | ext_type = id_ IDENTITY ('(' seed = DECIMAL ',' inc = DECIMAL ')')?
@@ -6263,7 +6323,7 @@ id_
     | TEMP_ID
     | DOUBLE_QUOTE_ID
     | DOUBLE_QUOTE_BLANK
-    | SQUARE_BRACKET_ID
+    | square_bracket_id
     | keyword
     | RAW
     ;
